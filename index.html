@@ -900,70 +900,7 @@
                     <div class="toggle-switch" id="toggle-dark-mode" data-setting="darkMode"></div>
                 </div>
             </div>
-
-            <!-- Background Effects Section -->
-            <div class="settings-section">
-                <h3 class="settings-section-title">Background Effects</h3>
-                <div class="settings-item">
-                    <div>
-                        <div class="settings-item-label">Particle System</div>
-                        <div class="settings-item-description">Animated particles with connections</div>
-                    </div>
-                    <div class="toggle-switch active" id="toggle-particles" data-setting="particles"></div>
-                </div>
-                <div class="settings-item">
-                    <div>
-                        <div class="settings-item-label">Star Animation</div>
-                        <div class="settings-item-description">Twinkling stars in the background</div>
-                    </div>
-                    <div class="toggle-switch active" id="toggle-stars" data-setting="stars"></div>
-                </div>
-            </div>
-
-            <!-- Animation Effects Section -->
-            <div class="settings-section">
-                <h3 class="settings-section-title">Animation Effects</h3>
-                <div class="settings-item">
-                    <div>
-                        <div class="settings-item-label">Magnetic Buttons</div>
-                        <div class="settings-item-description">Buttons follow mouse movement</div>
-                    </div>
-                    <div class="toggle-switch active" id="toggle-magnetic" data-setting="magneticButtons"></div>
-                </div>
-                <div class="settings-item">
-                    <div>
-                        <div class="settings-item-label">3D Tilt Effect</div>
-                        <div class="settings-item-description">Gallery items tilt on hover</div>
-                    </div>
-                    <div class="toggle-switch active" id="toggle-tilt3d" data-setting="tilt3D"></div>
-                </div>
-                <div class="settings-item">
-                    <div>
-                        <div class="settings-item-label">Smooth Scroll</div>
-                        <div class="settings-item-description">Smooth scrolling animations</div>
-                    </div>
-                    <div class="toggle-switch active" id="toggle-smooth-scroll" data-setting="smoothScroll"></div>
-                </div>
-            </div>
-
-            <!-- Performance Section -->
-            <div class="settings-section">
-                <h3 class="settings-section-title">Performance</h3>
-                <div class="settings-item">
-                    <div>
-                        <div class="settings-item-label">Reduce Motion</div>
-                        <div class="settings-item-description">Disable animations for better performance</div>
-                    </div>
-                    <div class="toggle-switch" id="toggle-reduce-motion" data-setting="reduceMotion"></div>
-                </div>
-            </div>
-
-            <!-- Reset Section -->
-            <div class="settings-section">
-                <button class="glow-button" id="reset-settings" style="width: 100%; margin-top: 20px;">
-                    Reset to Defaults
-                </button>
-            </div>
+            <!-- Only Dark Mode retained -->
         </div>
     </div>
 
@@ -1007,7 +944,6 @@
 
     <header>
         <div style="position: relative; display: inline-block;">
-            <img src="moonicon.png" alt="" loading="lazy" decoding="async" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150px; height: 150px; opacity: 0.3; z-index: 0; pointer-events: none;">
             <h1 style="position: relative; z-index: 1; margin: 0;">AtomicalMoon</h1>
         </div>
         <p class="intro">
@@ -1212,6 +1148,7 @@
             container: null,
             animationId: null,
             mouse: { x: 0, y: 0, active: false },
+            animateBound: null,
 
             init() {
                 if (!SiteConfig.particles.enabled) return;
@@ -1219,7 +1156,8 @@
                 if (!this.container) return;
 
                 this.createParticles();
-                this.animate();
+                this.animateBound = this.animate.bind(this);
+                this.animationId = requestAnimationFrame(this.animateBound);
                 this.setupInteractions();
             },
 
@@ -1292,7 +1230,7 @@
                     this.drawConnections();
                 }
 
-                this.animationId = requestAnimationFrame(this.animate.bind(this));
+                this.animationId = requestAnimationFrame(this.animateBound);
             },
 
             drawConnections() {
@@ -1882,13 +1820,7 @@
         const SettingsManager = {
             storageKey: 'atomicalmoon_settings',
             defaults: {
-                darkMode: false,
-                particles: true,
-                stars: true,
-                magneticButtons: true,
-                tilt3D: true,
-                smoothScroll: true,
-                reduceMotion: false
+                darkMode: false
             },
             current: {},
 
@@ -1940,19 +1872,13 @@
                 const button = document.getElementById('settings-button');
                 const closeBtn = document.getElementById('settings-close');
                 const overlay = document.getElementById('settings-overlay');
-                const resetBtn = document.getElementById('reset-settings');
 
                 // Open panel
                 button.addEventListener('click', () => this.openPanel());
                 overlay.addEventListener('click', () => this.closePanel());
                 closeBtn.addEventListener('click', () => this.closePanel());
 
-                // Reset button
-                resetBtn.addEventListener('click', () => {
-                    if (confirm('Reset all settings to defaults?')) {
-                        this.reset();
-                    }
-                });
+                // (Reset removed) 
 
                 // Toggle switches
                 document.querySelectorAll('.toggle-switch').forEach(toggle => {
