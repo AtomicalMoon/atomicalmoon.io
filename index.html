@@ -3,11 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AtomicalMoon – Portfolio</title>
+    <meta name="description" content="AtomicalMoon - Professional 3D modeler, texture artist, and render specialist. Specializing in Blockbench models, textures, and renders. Commission work available.">
+    <meta name="keywords" content="AtomicalMoon, 3D modeling, Blockbench, textures, renders, 3D artist, commission">
+    <meta name="author" content="AtomicalMoon">
+    <meta property="og:title" content="AtomicalMoon – Portfolio">
+    <meta property="og:description" content="Professional 3D modeler, texture artist, and render specialist">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="moonicon.png">
+    <title>AtomicalMoon – Portfolio | 3D Models, Textures & Renders</title>
     <link rel="icon" type="image/png" href="moonicon.png">
     <link rel="apple-touch-icon" href="moonicon.png">
     <link rel="shortcut icon" type="image/png" href="moonicon.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#7b7b7b">
     <style>
+        /* ============================================
+           CSS VARIABLES - THEME SYSTEM
+           Customize these to change the entire look!
+           ============================================ */
+        :root {
+            /* Color Palette - Light Mode (Default) */
+            --bg-primary: #d8d8d8;
+            --bg-secondary: rgba(255, 255, 255, 0.05);
+            --bg-overlay: rgba(0, 0, 0, 0.9);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --accent-color: #7b7b7b;
+            --accent-hover: #656565;
+            --border-color: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.15);
+            --glow-color: rgba(255, 255, 255, 0.2);
+            --settings-bg: rgba(255, 255, 255, 0.95);
+            --settings-text: #000000;
+            --settings-border: rgba(0, 0, 0, 0.1);
+            
+            /* Typography */
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            --font-size-base: 1em;
+            --font-size-h1: 2.5em;
+            --font-size-h2: 2em;
+            --font-size-large: 1.2em;
+            --line-height: 1.6;
+            
+            /* Spacing */
+            --spacing-xs: 10px;
+            --spacing-sm: 20px;
+            --spacing-md: 40px;
+            --spacing-lg: 60px;
+            --spacing-xl: 80px;
+            
+            /* Effects */
+            --blur-amount: 10px;
+            --border-radius: 12px;
+            --transition-speed: 0.3s;
+            --animation-duration: 0.6s;
+            --glow-intensity: 20px;
+            
+            /* Star System */
+            --star-color: #000000;
+            --star-opacity-min: 0.15;
+            --star-opacity-max: 0.95;
+            --star-count-back: 10;
+            --star-count-mid: 10;
+            --star-count-front: 10;
+            
+            /* Particle System */
+            --particle-count: 50;
+            --particle-speed: 2;
+            --particle-size-min: 2;
+            --particle-size-max: 5;
+            
+            /* 3D Effects */
+            --perspective: 1000px;
+            --transform-intensity: 20px;
+            
+            /* Gallery */
+            --gallery-gap: 25px;
+            --gallery-item-min: 300px;
+            --gallery-hover-scale: 1.05;
+            --gallery-hover-lift: -8px;
+            
+            /* Buttons */
+            --button-padding: 8px 20px;
+            --button-border-width: 6px;
+            --button-glow-pulse: 2s;
+        }
+
+        /* Dark Mode Theme */
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: rgba(255, 255, 255, 0.05);
+            --bg-overlay: rgba(0, 0, 0, 0.95);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --accent-color: #9b9b9b;
+            --accent-hover: #b0b0b0;
+            --border-color: rgba(255, 255, 255, 0.3);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --glow-color: rgba(255, 255, 255, 0.3);
+            --settings-bg: rgba(30, 30, 30, 0.98);
+            --settings-text: #ffffff;
+            --settings-border: rgba(255, 255, 255, 0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,14 +113,17 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #d8d8d8;
-            color: #ffffff;
-            line-height: 1.6;
+            font-family: var(--font-family);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: var(--line-height);
             position: relative;
             overflow-x: hidden;
         }
 
+        /* ============================================
+           ADVANCED BACKGROUND SYSTEMS
+           ============================================ */
         .stars {
             position: fixed;
             top: 0;
@@ -35,9 +136,40 @@
 
         .star {
             position: absolute;
-            background: #000000;
+            background: var(--star-color);
             clip-path: polygon(50% 0%, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0% 50%, 40% 40%);
             filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 15px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Particle System Container */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--text-primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* 3D Parallax Container */
+        .parallax-container {
+            perspective: var(--perspective);
+            transform-style: preserve-3d;
+        }
+
+        .parallax-layer {
+            transform-style: preserve-3d;
+            will-change: transform;
         }
 
         .star.layer-back {
@@ -53,18 +185,45 @@
         }
 
         @keyframes twinkleFast {
-            0%, 100% { opacity: 0.15; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: var(--star-opacity-min); }
+            50% { opacity: calc(var(--star-opacity-min) + 0.35); }
         }
 
         @keyframes twinkleMid {
-            0%, 100% { opacity: 0.25; }
-            50% { opacity: 0.7; }
+            0%, 100% { opacity: calc(var(--star-opacity-min) + 0.1); }
+            50% { opacity: calc(var(--star-opacity-min) + 0.55); }
         }
 
         @keyframes twinkleSlow {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.95; }
+            0%, 100% { opacity: calc(var(--star-opacity-min) + 0.25); }
+            50% { opacity: var(--star-opacity-max); }
+        }
+
+        /* Advanced Animation Keyframes */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes rotate3d {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 var(--glow-intensity) var(--glow-color),
+                           0 0 calc(var(--glow-intensity) * 2) rgba(255, 255, 255, 0.1);
+            }
+            50% { 
+                box-shadow: 0 0 calc(var(--glow-intensity) * 1.5) rgba(255, 255, 255, 0.4),
+                           0 0 calc(var(--glow-intensity) * 3) rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
         }
 
         @keyframes driftFast {
@@ -152,47 +311,58 @@
         }
 
         .glow-button {
-            padding: 8px 20px;
-            background: #7b7b7b;
-            border: 6px solid #ffffff;
-            color: #ffffff;
+            padding: var(--button-padding);
+            background: var(--accent-color);
+            border: var(--button-border-width) solid var(--border-color);
+            color: var(--text-primary);
             text-decoration: none;
-            font-size: 1.2em;
+            font-size: var(--font-size-large);
             font-weight: 600;
             border-radius: 4px;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-            animation: pulse 2s ease-in-out infinite;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 0 var(--glow-intensity) var(--glow-color);
+            animation: pulse-glow var(--button-glow-pulse) ease-in-out infinite;
+            transform-style: preserve-3d;
         }
 
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(255, 255, 255, 0.2),
-                            0 0 40px rgba(255, 255, 255, 0.1);
-            }
-            50% {
-                box-shadow: 0 0 30px rgba(255, 255, 255, 0.4),
-                            0 0 60px rgba(255, 255, 255, 0.2);
-            }
+        .glow-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .glow-button:hover::before {
+            left: 100%;
         }
 
         .glow-button:hover {
-            background: #656565;
-            transform: translateY(-2px);
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.4),
-                        0 0 80px rgba(255, 255, 255, 0.2);
+            background: var(--accent-hover);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 0 calc(var(--glow-intensity) * 2) rgba(255, 255, 255, 0.4),
+                        0 0 calc(var(--glow-intensity) * 4) rgba(255, 255, 255, 0.2);
+        }
+
+        /* Magnetic Button Effect */
+        .glow-button.magnetic {
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .gallery {
             max-width: 1200px;
-            margin: 60px auto;
-            padding: 0 20px;
+            margin: var(--spacing-lg) auto;
+            padding: 0 var(--spacing-sm);
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(var(--gallery-item-min), 1fr));
+            gap: var(--gallery-gap);
             background: none;
+            perspective: var(--perspective);
         }
 
         .gallery-item {
@@ -204,18 +374,44 @@
             transition: all 0.4s ease;
         }
 
+        .gallery-item {
+            transform-style: preserve-3d;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
         .gallery-item img {
             width: 100%;
             height: auto;
             object-fit: cover;
             display: block;
             aspect-ratio: 1;
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            will-change: transform;
         }
 
         .gallery-item:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15),
-                        0 0 30px rgba(0, 0, 0, 0.08);
+            transform: translateY(var(--gallery-hover-lift)) scale(1.02);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(var(--gallery-hover-scale)) rotateY(5deg);
+        }
+
+        /* 3D Tilt Effect */
+        .gallery-item.tilt-3d {
+            transform-style: preserve-3d;
+        }
+
+        .gallery-item img[src=""],
+        .gallery-item img:not([src]) {
+            display: none;
+        }
+
+        .gallery-item:hover {
+            box-shadow: 0 10px 40px var(--shadow-color),
+                        0 0 30px rgba(0, 0, 0, 0.08),
+                        0 0 60px var(--glow-color);
         }
 
         .placeholder-image {
@@ -238,6 +434,38 @@
             margin-top: 60px;
         }
 
+        .info-section {
+            position: relative;
+            z-index: 1;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(var(--blur-amount));
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        }
+
+        .info-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px var(--shadow-color);
+        }
+
+        /* Advanced Text Effects */
+        .text-gradient {
+            background: linear-gradient(45deg, var(--text-primary), var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px var(--glow-color),
+                         0 0 20px var(--glow-color),
+                         0 0 30px var(--glow-color);
+        }
+
+        .info-section h2 {
+            margin-bottom: 25px;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2em;
@@ -246,6 +474,25 @@
             .gallery {
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                 gap: 20px;
+            }
+
+            .info-section {
+                padding: 30px 15px;
+                margin: 40px auto;
+            }
+
+            .info-section h2 {
+                font-size: 1.5em;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .glow-button {
+                width: 100%;
+                max-width: 300px;
             }
         }
 
@@ -409,6 +656,217 @@
                 top: 10px;
                 right: 10px;
             }
+
+            footer a {
+                font-size: 1em;
+            }
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Loading state for images */
+        .gallery-item img {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .gallery-item img[src=""] {
+            opacity: 0;
+        }
+
+        /* ============================================
+           SETTINGS PANEL STYLES
+           ============================================ */
+        .settings-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--accent-color);
+            border: 4px solid var(--border-color);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--text-primary);
+            box-shadow: 0 4px 20px var(--shadow-color);
+            transition: all var(--transition-speed) ease;
+            user-select: none;
+        }
+
+        .settings-button:hover {
+            background: var(--accent-hover);
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 30px var(--glow-color);
+        }
+
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background: var(--settings-bg);
+            backdrop-filter: blur(20px);
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            transition: right 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .settings-panel.active {
+            right: 0;
+        }
+
+        .settings-panel-header {
+            padding: 30px;
+            border-bottom: 2px solid var(--settings-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-secondary);
+        }
+
+        .settings-panel-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--settings-text);
+            margin: 0;
+        }
+
+        .settings-panel-close {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            font-size: 32px;
+            color: var(--settings-text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .settings-panel-close:hover {
+            background: var(--bg-secondary);
+            transform: rotate(90deg);
+        }
+
+        .settings-content {
+            padding: 30px;
+        }
+
+        .settings-section {
+            margin-bottom: 35px;
+        }
+
+        .settings-section-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--settings-text);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--settings-border);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--settings-border);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item-label {
+            flex: 1;
+            color: var(--settings-text);
+            font-size: 1em;
+        }
+
+        .settings-item-description {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--accent-color);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background var(--transition-speed) ease;
+            border: 2px solid var(--border-color);
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-hover);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform var(--transition-speed) ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(30px);
+        }
+
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .settings-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @media (max-width: 768px) {
+            .settings-panel {
+                width: 100%;
+                right: -100%;
+            }
+
+            .settings-button {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
         }
     </style>
     <!-- Animation Libraries -->
@@ -416,6 +874,99 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body>
+    <!-- Settings Button -->
+    <button class="settings-button" id="settings-button" aria-label="Open Settings" title="Settings">
+        ⚙️
+    </button>
+
+    <!-- Settings Overlay -->
+    <div class="settings-overlay" id="settings-overlay"></div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-panel-header">
+            <h2 class="settings-panel-title">Settings</h2>
+            <button class="settings-panel-close" id="settings-close" aria-label="Close Settings">&times;</button>
+        </div>
+        <div class="settings-content">
+            <!-- Theme Section -->
+            <div class="settings-section">
+                <h3 class="settings-section-title">Theme</h3>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-item-label">Dark Mode</div>
+                        <div class="settings-item-description">Switch between light and dark themes</div>
+                    </div>
+                    <div class="toggle-switch" id="toggle-dark-mode" data-setting="darkMode"></div>
+                </div>
+            </div>
+
+            <!-- Background Effects Section -->
+            <div class="settings-section">
+                <h3 class="settings-section-title">Background Effects</h3>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-item-label">Particle System</div>
+                        <div class="settings-item-description">Animated particles with connections</div>
+                    </div>
+                    <div class="toggle-switch active" id="toggle-particles" data-setting="particles"></div>
+                </div>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-item-label">Star Animation</div>
+                        <div class="settings-item-description">Twinkling stars in the background</div>
+                    </div>
+                    <div class="toggle-switch active" id="toggle-stars" data-setting="stars"></div>
+                </div>
+            </div>
+
+            <!-- Animation Effects Section -->
+            <div class="settings-section">
+                <h3 class="settings-section-title">Animation Effects</h3>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-item-label">Magnetic Buttons</div>
+                        <div class="settings-item-description">Buttons follow mouse movement</div>
+                    </div>
+                    <div class="toggle-switch active" id="toggle-magnetic" data-setting="magneticButtons"></div>
+                </div>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-item-label">3D Tilt Effect</div>
+                        <div class="settings-item-description">Gallery items tilt on hover</div>
+                    </div>
+                    <div class="toggle-switch active" id="toggle-tilt3d" data-setting="tilt3D"></div>
+                </div>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-item-label">Smooth Scroll</div>
+                        <div class="settings-item-description">Smooth scrolling animations</div>
+                    </div>
+                    <div class="toggle-switch active" id="toggle-smooth-scroll" data-setting="smoothScroll"></div>
+                </div>
+            </div>
+
+            <!-- Performance Section -->
+            <div class="settings-section">
+                <h3 class="settings-section-title">Performance</h3>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-item-label">Reduce Motion</div>
+                        <div class="settings-item-description">Disable animations for better performance</div>
+                    </div>
+                    <div class="toggle-switch" id="toggle-reduce-motion" data-setting="reduceMotion"></div>
+                </div>
+            </div>
+
+            <!-- Reset Section -->
+            <div class="settings-section">
+                <button class="glow-button" id="reset-settings" style="width: 100%; margin-top: 20px;">
+                    Reset to Defaults
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="stars">
         <!-- Back layer - small, fast moving -->
         <div class="star layer-back" style="width: 12px; height: 12px; top: 10%; left: 15%; animation-delay: 0s;"></div>
@@ -463,60 +1014,433 @@
             Hello, my name is Atomicalmoon, and I've been in the Blockbench community for 3-4 years. I specialize in models, textures, and renders!
         </p>
         <div class="cta-buttons">
-            <a href="#" class="glow-button">Commission Info</a>
-            <a href="#" class="glow-button">Terms Of Service</a>
+            <a href="#commission" class="glow-button" id="commission-btn">Commission Info</a>
+            <a href="#terms" class="glow-button" id="terms-btn">Terms Of Service</a>
         </div>
     </header>
 
-    <div class="gallery">
-        <div class="gallery-item">
-            <img src="render1.png" alt="Render 1">
-        </div>
-        <div class="gallery-item">
-            <img src="render2.png" alt="Render 2">
-        </div>
-        <div class="gallery-item">
-            <img src="render3.png" alt="Render 3">
-        </div>
-        <div class="gallery-item">
-            <img src="render4.png" alt="Render 4">
-        </div>
-        <div class="gallery-item">
-            <img src="render5.png" alt="Render 5">
-        </div>
-        <div class="gallery-item">
-            <img src="render6.png" alt="Render 6">
-        </div>
-        <div class="gallery-item">
-            <img src="render7.png" alt="Render 7">
-        </div>
-        <div class="gallery-item">
-            <img src="render8.png" alt="Render 8">
-        </div>
-        <div class="gallery-item">
-            <img src="render9.png" alt="Render 9">
+    <div class="gallery" id="gallery">
+        <div class="gallery-item animate-on-scroll">
+            <img src="render1.png" alt="3D Render by AtomicalMoon" loading="lazy">
         </div>
     </div>
 
-    <footer>
-        <p>© 2025 AtomicalMoon. All rights reserved.</p>
+    <!-- Commission Section -->
+    <section id="commission" class="info-section animate-on-scroll" style="max-width: 800px; margin: 60px auto; padding: 40px 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; backdrop-filter: blur(10px);">
+        <h2 style="color: #ffffff; text-align: center; margin-bottom: 20px; font-size: 2em; text-shadow: -2px -2px 0 #d8d8d8, 2px -2px 0 #d8d8d8, -2px 2px 0 #d8d8d8, 2px 2px 0 #d8d8d8;">Commission Information</h2>
+        <p style="color: #ffffff; text-align: center; font-size: 1.1em; line-height: 1.8; text-shadow: -1px -1px 0 #d8d8d8, 1px -1px 0 #d8d8d8, -1px 1px 0 #d8d8d8, 1px 1px 0 #d8d8d8;">
+            I'm available for custom 3D models, textures, and renders! With 3-4 years of experience in the Blockbench community, 
+            I specialize in creating high-quality assets for your projects. Contact me to discuss your project requirements and pricing.
+        </p>
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="mailto:your-email@example.com" class="glow-button" style="display: inline-block;">Contact Me</a>
+        </div>
+    </section>
+
+    <!-- Terms of Service Section -->
+    <section id="terms" class="info-section animate-on-scroll" style="max-width: 800px; margin: 60px auto; padding: 40px 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; backdrop-filter: blur(10px);">
+        <h2 style="color: #ffffff; text-align: center; margin-bottom: 20px; font-size: 2em; text-shadow: -2px -2px 0 #d8d8d8, 2px -2px 0 #d8d8d8, -2px 2px 0 #d8d8d8, 2px 2px 0 #d8d8d8;">Terms Of Service</h2>
+        <div style="color: #ffffff; font-size: 1em; line-height: 1.8; text-shadow: -1px -1px 0 #d8d8d8, 1px -1px 0 #d8d8d8, -1px 1px 0 #d8d8d8, 1px 1px 0 #d8d8d8;">
+            <p style="margin-bottom: 15px;"><strong>Payment:</strong> 50% upfront, 50% upon completion. Payment via PayPal or other agreed methods.</p>
+            <p style="margin-bottom: 15px;"><strong>Revisions:</strong> Up to 3 major revisions included. Additional revisions may incur extra fees.</p>
+            <p style="margin-bottom: 15px;"><strong>Timeline:</strong> Estimated completion time will be discussed before starting. Rush orders available for additional fee.</p>
+            <p style="margin-bottom: 15px;"><strong>Usage Rights:</strong> Client receives commercial usage rights. I retain the right to showcase work in my portfolio.</p>
+            <p style="margin-bottom: 15px;"><strong>Cancellation:</strong> Client may cancel before work begins for full refund. After work starts, refunds are prorated based on progress.</p>
+        </div>
+    </section>
+
+    <footer style="position: relative; z-index: 1;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+            <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap;">
+                <a href="https://github.com/AtomicalMoon" target="_blank" rel="noopener noreferrer" aria-label="GitHub" style="color: #ffffff; text-decoration: none; font-size: 1.2em; transition: transform 0.3s ease; display: inline-block;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">GitHub</a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter" style="color: #ffffff; text-decoration: none; font-size: 1.2em; transition: transform 0.3s ease; display: inline-block;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">Twitter</a>
+                <a href="mailto:your-email@example.com" aria-label="Email" style="color: #ffffff; text-decoration: none; font-size: 1.2em; transition: transform 0.3s ease; display: inline-block;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">Email</a>
+            </div>
+            <p style="text-align: center; color: #ffffff; font-size: 0.9em; text-shadow: -1px -1px 0 #d8d8d8, 1px -1px 0 #d8d8d8, -1px 1px 0 #d8d8d8, 1px 1px 0 #d8d8d8;">© 2025 AtomicalMoon. All rights reserved.</p>
+        </div>
     </footer>
+    <!-- Advanced Particle System Container -->
+    <svg class="particles" id="particles" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></svg>
+
     <!-- JavaScript Foundation -->
     <script>
+        /* ============================================
+           ⚙️ ADVANCED CUSTOMIZATION GUIDE ⚙️
+           ============================================
+           
+           This website uses a highly customizable, modular architecture.
+           
+           🎨 QUICK CUSTOMIZATION:
+           1. CSS Variables: Edit :root variables in <style> section
+           2. JavaScript Config: Modify SiteConfig object below
+           3. Runtime API: Use browser console to change settings live
+           
+           📝 CUSTOMIZATION EXAMPLES:
+           
+           // Change particle count
+           SiteConfig.particles.count = 100;
+           
+           // Change theme colors
+           Site.setTheme('dark', {
+               bgPrimary: '#1a1a1a',
+               textPrimary: '#ffffff',
+               accent: '#ff6b6b'
+           });
+           
+           // Disable effects
+           SiteConfig.effects.magneticButtons = false;
+           
+           // Add custom animation
+           AnimationPresets.myCustom = {
+               opacity: 0,
+               scale: 1.5,
+               rotation: 360,
+               duration: 1.5
+           };
+           
+           // Register custom plugin
+           PluginSystem.register('myPlugin', {
+               init() { console.log('My plugin loaded!'); }
+           });
+           
+           ============================================ */
+        
         // ============================================
-        // SITE FOUNDATION - Utility Functions & Setup
+        // ADVANCED CONFIGURATION SYSTEM
+        // Customize everything here!
         // ============================================
-
-        const Site = {
-            // Configuration
-            config: {
-                animationDuration: 0.6,
+        const SiteConfig = {
+            // Animation Settings
+            animations: {
+                enabled: true,
+                duration: 0.6,
                 easing: 'power2.out',
                 scrollThreshold: 0.1,
-                enableAnimations: true,
-                enableLightbox: true,
-                enableCursorEffects: true
+                staggerDelay: 0.1,
+                parallaxSpeed: 0.5
             },
+
+            // Particle System
+            particles: {
+                enabled: true,
+                count: 50,
+                speed: 2,
+                sizeMin: 2,
+                sizeMax: 5,
+                opacity: 0.3,
+                color: '#ffffff',
+                connectionDistance: 150,
+                showConnections: true
+            },
+
+            // Star System
+            stars: {
+                enabled: true,
+                countBack: 10,
+                countMid: 10,
+                countFront: 10,
+                twinkleSpeed: 1.0
+            },
+
+            // Effects
+            effects: {
+                lightbox: true,
+                cursorEffects: true,
+                magneticButtons: true,
+                parallax3D: true,
+                tilt3D: true,
+                smoothScroll: true
+            },
+
+            // Performance
+            performance: {
+                reduceMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+                throttleScroll: true,
+                throttleResize: true,
+                useWillChange: true
+            },
+
+            // Theme (can be changed dynamically)
+            theme: {
+                name: 'default',
+                colors: {
+                    bgPrimary: '#d8d8d8',
+                    bgSecondary: 'rgba(255, 255, 255, 0.05)',
+                    textPrimary: '#ffffff',
+                    accent: '#7b7b7b'
+                }
+            }
+        };
+
+        // ============================================
+        // PLUGIN ARCHITECTURE
+        // ============================================
+        const PluginSystem = {
+            plugins: {},
+
+            register(name, plugin) {
+                this.plugins[name] = plugin;
+                if (plugin.init) plugin.init();
+                console.log(`Plugin "${name}" registered`);
+            },
+
+            unregister(name) {
+                if (this.plugins[name] && this.plugins[name].destroy) {
+                    this.plugins[name].destroy();
+                }
+                delete this.plugins[name];
+            },
+
+            get(name) {
+                return this.plugins[name];
+            },
+
+            call(method, ...args) {
+                Object.values(this.plugins).forEach(plugin => {
+                    if (plugin[method] && typeof plugin[method] === 'function') {
+                        plugin[method](...args);
+                    }
+                });
+            }
+        };
+
+        // ============================================
+        // PARTICLE SYSTEM PLUGIN
+        // ============================================
+        const ParticleSystem = {
+            particles: [],
+            container: null,
+            animationId: null,
+
+            init() {
+                if (!SiteConfig.particles.enabled) return;
+                this.container = document.getElementById('particles');
+                if (!this.container) return;
+
+                this.createParticles();
+                this.animate();
+                this.setupInteractions();
+            },
+
+            createParticles() {
+                const count = SiteConfig.particles.count;
+                for (let i = 0; i < count; i++) {
+                    const particle = this.createParticle();
+                    this.particles.push(particle);
+                    this.container.appendChild(particle.element);
+                }
+            },
+
+            createParticle() {
+                const size = Math.random() * (SiteConfig.particles.sizeMax - SiteConfig.particles.sizeMin) + SiteConfig.particles.sizeMin;
+                const element = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                element.setAttribute('r', size);
+                element.setAttribute('fill', SiteConfig.particles.color);
+                element.setAttribute('opacity', SiteConfig.particles.opacity);
+                element.classList.add('particle');
+
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                
+                element.setAttribute('cx', x);
+                element.setAttribute('cy', y);
+
+                return {
+                    element,
+                    x,
+                    y,
+                    vx: (Math.random() - 0.5) * SiteConfig.particles.speed,
+                    vy: (Math.random() - 0.5) * SiteConfig.particles.speed,
+                    size
+                };
+            },
+
+            animate() {
+                this.particles.forEach(particle => {
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+
+                    if (particle.x < 0 || particle.x > window.innerWidth) particle.vx *= -1;
+                    if (particle.y < 0 || particle.y > window.innerHeight) particle.vy *= -1;
+
+                    // Update SVG circle position
+                    particle.element.setAttribute('cx', particle.x);
+                    particle.element.setAttribute('cy', particle.y);
+                });
+
+                if (SiteConfig.particles.showConnections) {
+                    this.drawConnections();
+                }
+
+                this.animationId = requestAnimationFrame(() => this.animate());
+            },
+
+            drawConnections() {
+                const ctx = this.container.getContext?.('2d');
+                if (!ctx) {
+                    // Use SVG lines for connections
+                    this.drawSVGConnections();
+                    return;
+                }
+            },
+
+            drawSVGConnections() {
+                // Remove old connections
+                const oldLines = this.container.querySelectorAll('.particle-connection');
+                oldLines.forEach(line => line.remove());
+
+                for (let i = 0; i < this.particles.length; i++) {
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const p1 = this.particles[i];
+                        const p2 = this.particles[j];
+                        const distance = Math.sqrt(
+                            Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2)
+                        );
+
+                        if (distance < SiteConfig.particles.connectionDistance) {
+                            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                            line.setAttribute('x1', p1.x);
+                            line.setAttribute('y1', p1.y);
+                            line.setAttribute('x2', p2.x);
+                            line.setAttribute('y2', p2.y);
+                            line.setAttribute('stroke', SiteConfig.particles.color);
+                            line.setAttribute('stroke-opacity', (1 - distance / SiteConfig.particles.connectionDistance) * 0.3);
+                            line.setAttribute('stroke-width', '1');
+                            line.classList.add('particle-connection');
+                            this.container.appendChild(line);
+                        }
+                    }
+                }
+            },
+
+            resize() {
+                // Update particle positions on resize
+                this.particles.forEach(particle => {
+                    if (particle.x > window.innerWidth) particle.x = window.innerWidth;
+                    if (particle.y > window.innerHeight) particle.y = window.innerHeight;
+                });
+            },
+
+            setupInteractions() {
+                document.addEventListener('mousemove', (e) => {
+                    this.particles.forEach((particle, i) => {
+                        const dx = e.clientX - particle.x;
+                        const dy = e.clientY - particle.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const force = 100 / distance;
+
+                        if (distance < 100) {
+                            particle.vx -= (dx / distance) * force * 0.01;
+                            particle.vy -= (dy / distance) * force * 0.01;
+                        }
+                    });
+                });
+            },
+
+            destroy() {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+                this.particles = [];
+            }
+        };
+
+        // ============================================
+        // MAGNETIC BUTTONS PLUGIN
+        // ============================================
+        const MagneticButtons = {
+            buttons: [],
+
+            init() {
+                if (!SiteConfig.effects.magneticButtons) return;
+                this.setupButtons();
+            },
+
+            setupButtons() {
+                document.querySelectorAll('.glow-button').forEach(button => {
+                    button.classList.add('magnetic');
+                    this.buttons.push(button);
+                    this.attachMagneticEffect(button);
+                });
+            },
+
+            attachMagneticEffect(button) {
+                button.addEventListener('mousemove', (e) => {
+                    const rect = button.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+
+                    if (typeof gsap !== 'undefined') {
+                        gsap.to(button, {
+                            x: x * 0.3,
+                            y: y * 0.3,
+                            duration: 0.3,
+                            ease: 'power2.out'
+                        });
+                    } else {
+                        button.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                    }
+                });
+
+                button.addEventListener('mouseleave', () => {
+                    if (typeof gsap !== 'undefined') {
+                        gsap.to(button, {
+                            x: 0,
+                            y: 0,
+                            duration: 0.5,
+                            ease: 'elastic.out(1, 0.5)'
+                        });
+                    } else {
+                        button.style.transform = 'translate(0, 0)';
+                    }
+                });
+            }
+        };
+
+        // ============================================
+        // 3D TILT EFFECT PLUGIN
+        // ============================================
+        const Tilt3D = {
+            elements: [],
+
+            init() {
+                if (!SiteConfig.effects.tilt3D) return;
+                this.setupElements();
+            },
+
+            setupElements() {
+                document.querySelectorAll('.gallery-item').forEach(item => {
+                    item.classList.add('tilt-3d');
+                    this.elements.push(item);
+                    this.attachTiltEffect(item);
+                });
+            },
+
+            attachTiltEffect(element) {
+                element.addEventListener('mousemove', (e) => {
+                    const rect = element.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 10;
+                    const rotateY = (centerX - x) / 10;
+
+                    element.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+                });
+
+                element.addEventListener('mouseleave', () => {
+                    element.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+                });
+            }
+        };
+
+        // ============================================
+        // MAIN SITE OBJECT (Refactored)
+        // ============================================
+        const Site = {
+            // Configuration
+            config: SiteConfig,
 
             // State management
             state: {
@@ -531,19 +1455,49 @@
 
             // Initialize everything
             init() {
-                this.registerPlugins();
+                this.registerGSAPPlugins();
+                this.registerSystemPlugins();
                 this.setupEventListeners();
                 this.setupIntersectionObserver();
                 this.setupLightbox();
                 this.setupCursorTracking();
-                console.log('Site foundation initialized');
+                this.applyTheme();
+                console.log('🚀 Advanced Site System Initialized');
+                console.log('📦 Plugins:', Object.keys(PluginSystem.plugins));
             },
 
             // Register GSAP plugins
-            registerPlugins() {
+            registerGSAPPlugins() {
                 if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
                     gsap.registerPlugin(ScrollTrigger);
                 }
+            },
+
+            // Register custom plugins
+            registerSystemPlugins() {
+                PluginSystem.register('particles', ParticleSystem);
+                PluginSystem.register('magneticButtons', MagneticButtons);
+                PluginSystem.register('tilt3D', Tilt3D);
+            },
+
+            // Theme Management
+            applyTheme() {
+                const root = document.documentElement;
+                const theme = this.config.theme.colors;
+                
+                root.style.setProperty('--bg-primary', theme.bgPrimary);
+                root.style.setProperty('--bg-secondary', theme.bgSecondary);
+                root.style.setProperty('--text-primary', theme.textPrimary);
+                root.style.setProperty('--accent-color', theme.accent);
+            },
+
+            // Change theme dynamically
+            setTheme(themeName, colors) {
+                this.config.theme.name = themeName;
+                if (colors) {
+                    Object.assign(this.config.theme.colors, colors);
+                }
+                this.applyTheme();
             },
 
             // Global event listeners
@@ -828,9 +1782,421 @@
             }
         };
 
+        // ============================================
+        // ADVANCED ANIMATION PRESETS
+        // ============================================
+        const AnimationPresets = {
+            fadeInUp: {
+                opacity: 0,
+                y: 50,
+                duration: 0.6,
+                ease: 'power2.out'
+            },
+            fadeInScale: {
+                opacity: 0,
+                scale: 0.8,
+                duration: 0.6,
+                ease: 'back.out(1.2)'
+            },
+            slideInLeft: {
+                opacity: 0,
+                x: -100,
+                duration: 0.8,
+                ease: 'power3.out'
+            },
+            slideInRight: {
+                opacity: 0,
+                x: 100,
+                duration: 0.8,
+                ease: 'power3.out'
+            },
+            rotateIn: {
+                opacity: 0,
+                rotation: -180,
+                scale: 0.5,
+                duration: 1,
+                ease: 'back.out(1.7)'
+            }
+        };
+
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        const Utils = {
+            throttle(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            },
+
+            debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            },
+
+            lerp(start, end, factor) {
+                return start + (end - start) * factor;
+            },
+
+            map(value, inMin, inMax, outMin, outMax) {
+                return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+            }
+        };
+
+        // ============================================
+        // SETTINGS MANAGER
+        // ============================================
+        const SettingsManager = {
+            storageKey: 'atomicalmoon_settings',
+            defaults: {
+                darkMode: false,
+                particles: true,
+                stars: true,
+                magneticButtons: true,
+                tilt3D: true,
+                smoothScroll: true,
+                reduceMotion: false
+            },
+            current: {},
+
+            init() {
+                this.loadSettings();
+                this.setupUI();
+                this.applySettings();
+            },
+
+            loadSettings() {
+                try {
+                    const saved = localStorage.getItem(this.storageKey);
+                    this.current = saved ? JSON.parse(saved) : { ...this.defaults };
+                } catch (error) {
+                    console.error('Error loading settings:', error);
+                    this.current = { ...this.defaults };
+                }
+            },
+
+            saveSettings() {
+                try {
+                    localStorage.setItem(this.storageKey, JSON.stringify(this.current));
+                } catch (error) {
+                    console.error('Error saving settings:', error);
+                }
+            },
+
+            get(setting) {
+                return this.current[setting] !== undefined 
+                    ? this.current[setting] 
+                    : this.defaults[setting];
+            },
+
+            set(setting, value) {
+                this.current[setting] = value;
+                this.saveSettings();
+                this.applySetting(setting, value);
+            },
+
+            reset() {
+                this.current = { ...this.defaults };
+                this.saveSettings();
+                this.applySettings();
+                this.updateUI();
+            },
+
+            setupUI() {
+                const panel = document.getElementById('settings-panel');
+                const button = document.getElementById('settings-button');
+                const closeBtn = document.getElementById('settings-close');
+                const overlay = document.getElementById('settings-overlay');
+                const resetBtn = document.getElementById('reset-settings');
+
+                // Open panel
+                button.addEventListener('click', () => this.openPanel());
+                overlay.addEventListener('click', () => this.closePanel());
+                closeBtn.addEventListener('click', () => this.closePanel());
+
+                // Reset button
+                resetBtn.addEventListener('click', () => {
+                    if (confirm('Reset all settings to defaults?')) {
+                        this.reset();
+                    }
+                });
+
+                // Toggle switches
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    toggle.addEventListener('click', () => {
+                        const setting = toggle.dataset.setting;
+                        const currentValue = this.get(setting);
+                        this.set(setting, !currentValue);
+                        toggle.classList.toggle('active');
+                    });
+                });
+
+                // Keyboard shortcut (S key to open settings)
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 's' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                        const activeElement = document.activeElement;
+                        if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
+                            e.preventDefault();
+                            this.togglePanel();
+                        }
+                    }
+                    if (e.key === 'Escape' && panel.classList.contains('active')) {
+                        this.closePanel();
+                    }
+                });
+
+                this.updateUI();
+            },
+
+            updateUI() {
+                document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                    const setting = toggle.dataset.setting;
+                    const value = this.get(setting);
+                    toggle.classList.toggle('active', value);
+                });
+            },
+
+            openPanel() {
+                const panel = document.getElementById('settings-panel');
+                const overlay = document.getElementById('settings-overlay');
+                panel.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            },
+
+            closePanel() {
+                const panel = document.getElementById('settings-panel');
+                const overlay = document.getElementById('settings-overlay');
+                panel.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            },
+
+            togglePanel() {
+                const panel = document.getElementById('settings-panel');
+                if (panel.classList.contains('active')) {
+                    this.closePanel();
+                } else {
+                    this.openPanel();
+                }
+            },
+
+            applySettings() {
+                Object.keys(this.current).forEach(setting => {
+                    this.applySetting(setting, this.current[setting]);
+                });
+            },
+
+            applySetting(setting, value) {
+                switch (setting) {
+                    case 'darkMode':
+                        document.documentElement.setAttribute('data-theme', value ? 'dark' : 'light');
+                        break;
+
+                    case 'particles':
+                        if (SiteConfig) {
+                            SiteConfig.particles.enabled = value;
+                            if (PluginSystem && PluginSystem.get('particles')) {
+                                if (value) {
+                                    PluginSystem.get('particles').init('particles');
+                                } else {
+                                    PluginSystem.get('particles').destroy();
+                                    const container = document.getElementById('particles');
+                                    if (container) {
+                                        container.innerHTML = '';
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case 'stars':
+                        const starsContainer = document.querySelector('.stars');
+                        if (starsContainer) {
+                            starsContainer.style.display = value ? 'block' : 'none';
+                        }
+                        break;
+
+                    case 'magneticButtons':
+                        if (SiteConfig) {
+                            SiteConfig.effects.magneticButtons = value;
+                            if (PluginSystem && PluginSystem.get('magneticButtons')) {
+                                if (value) {
+                                    PluginSystem.get('magneticButtons').init();
+                                } else {
+                                    document.querySelectorAll('.glow-button').forEach(btn => {
+                                        btn.classList.remove('magnetic');
+                                        btn.style.transform = '';
+                                    });
+                                }
+                            }
+                        }
+                        break;
+
+                    case 'tilt3D':
+                        if (SiteConfig) {
+                            SiteConfig.effects.tilt3D = value;
+                            document.querySelectorAll('.gallery-item').forEach(item => {
+                                if (value) {
+                                    item.classList.add('tilt-3d');
+                                } else {
+                                    item.classList.remove('tilt-3d');
+                                    item.style.transform = '';
+                                }
+                            });
+                        }
+                        break;
+
+                    case 'smoothScroll':
+                        if (SiteConfig) {
+                            SiteConfig.effects.smoothScroll = value;
+                            document.documentElement.style.scrollBehavior = value ? 'smooth' : 'auto';
+                        }
+                        break;
+
+                    case 'reduceMotion':
+                        if (SiteConfig) {
+                            SiteConfig.performance.reduceMotion = value;
+                            if (value) {
+                                document.documentElement.style.setProperty('--animation-duration', '0s');
+                                document.documentElement.style.setProperty('--transition-speed', '0s');
+                            } else {
+                                document.documentElement.style.setProperty('--animation-duration', '0.6s');
+                                document.documentElement.style.setProperty('--transition-speed', '0.3s');
+                            }
+                        }
+                        break;
+                }
+            }
+        };
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
         // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Settings Manager first
+            SettingsManager.init();
+            
             Site.init();
+            Site.init();
+            
+            // Handle window resize with throttling
+            window.addEventListener('resize', Utils.throttle(() => {
+                PluginSystem.call('resize');
+                if (typeof ScrollTrigger !== 'undefined') {
+                    ScrollTrigger.refresh();
+                }
+            }, 250));
+            
+            // Setup gallery lightbox functionality
+            const galleryItems = document.querySelectorAll('.gallery-item img');
+            
+            // Handle image loading errors
+            galleryItems.forEach((img) => {
+                img.addEventListener('error', function() {
+                    this.style.display = 'none';
+                    const parent = this.parentElement;
+                    if (parent && parent.classList.contains('gallery-item')) {
+                        parent.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Get valid image sources for lightbox
+            const imageSources = Array.from(galleryItems)
+                .filter(img => img.complete && img.naturalHeight !== 0 && img.style.display !== 'none')
+                .map(img => img.src);
+            
+            galleryItems.forEach((img, index) => {
+                if (img.complete && img.naturalHeight !== 0) {
+                    img.addEventListener('click', () => {
+                        Site.openLightbox(img.src, img.alt || `Render ${index + 1}`, imageSources);
+                    });
+                }
+            });
+
+            // Setup smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') return;
+                    
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        Site.scrollTo(target, -80);
+                    }
+                });
+            });
+
+            // Animate gallery items on scroll
+            Site.observe('.gallery-item');
+            Site.observe('.info-section');
+            
+            // Stagger animation for gallery with advanced presets
+            if (typeof gsap !== 'undefined') {
+                gsap.utils.toArray('.gallery-item').forEach((item, i) => {
+                    const preset = AnimationPresets.fadeInUp;
+                    gsap.from(item, {
+                        ...preset,
+                        delay: i * SiteConfig.animations.staggerDelay,
+                        scrollTrigger: {
+                            trigger: item,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    });
+                });
+
+                // Animate info sections
+                gsap.utils.toArray('.info-section').forEach((section, i) => {
+                    const preset = AnimationPresets.fadeInScale;
+                    gsap.from(section, {
+                        ...preset,
+                        delay: i * 0.2,
+                        scrollTrigger: {
+                            trigger: section,
+                            start: 'top 80%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    });
+                });
+            }
+
+            // Expose configuration globally for easy customization
+            window.SiteConfig = SiteConfig;
+            window.PluginSystem = PluginSystem;
+            window.Site = Site;
+            window.AnimationPresets = AnimationPresets;
+            window.SettingsManager = SettingsManager;
+            
+            console.log('✨ Customization API Ready!');
+            console.log('💡 Access SiteConfig, PluginSystem, Site, and AnimationPresets from console');
+            
+            // Register Service Worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registered:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            }
         });
     </script>
 </body>
