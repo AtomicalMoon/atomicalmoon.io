@@ -103,6 +103,18 @@ Database tables are defined in `server/database.js`.
 - `GET /api/commissions` - Get commissions
 - `GET /api/gallery` - Get gallery items
 - `POST /api/gallery` - Upload gallery item
+
+Frontend-only gallery
+---------------------
+
+To add images to the site gallery without editing code, place your image files into `src/assets/gallery/` (create the folder if it doesn't exist). The site automatically bundles and displays any `png`, `jpg`, `jpeg`, or `webp` file found there.
+
+Examples:
+
+- `src/assets/gallery/render1.png`
+- `src/assets/gallery/render2.jpg`
+
+If no images are found in that folder, the page will gracefully fall back to `render1.png` at the project root (legacy behavior).
 - `POST /api/analytics` - Log analytics event
 - `GET /api/analytics` - Get analytics data
 - `GET /api/settings/:key` - Get setting

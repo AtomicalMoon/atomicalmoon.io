@@ -955,11 +955,41 @@
         </div>
     </header>
 
-    <div class="gallery" id="gallery">
-        <div class="gallery-item animate-on-scroll">
-            <img src="render1.png" alt="3D Render by AtomicalMoon" loading="lazy">
-        </div>
-    </div>
+        <div class="gallery" id="gallery" aria-live="polite"></div>
+
+        <script type="module">
+            // Dynamically import all gallery images placed under `src/assets/gallery/`.
+            // To add images, drop them in that folder (e.g. src/assets/gallery/render1.png)
+            // Vite will bundle them and expose URLs via import.meta.glob.
+            const modules = import.meta.glob('/src/assets/gallery/*.{png,jpg,jpeg,webp}', { eager: true, as: 'url' });
+            const urls = Object.values(modules).sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+            const gallery = document.getElementById('gallery');
+
+            if (!gallery) {
+                console.warn('Gallery container not found');
+            } else if (urls.length === 0) {
+                // Fallback: try root-level render1.png if present (keeps previous behavior)
+                const fallbackItem = document.createElement('div');
+                fallbackItem.className = 'gallery-item animate-on-scroll';
+                const img = document.createElement('img');
+                img.src = 'render1.png';
+                img.alt = 'Render';
+                img.loading = 'lazy';
+                fallbackItem.appendChild(img);
+                gallery.appendChild(fallbackItem);
+            } else {
+                for (const url of urls) {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item animate-on-scroll';
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Render';
+                    img.loading = 'lazy';
+                    item.appendChild(img);
+                    gallery.appendChild(item);
+                }
+            }
+        </script>
 
     <!-- Commission Section -->
     <section id="commission" class="info-section animate-on-scroll" style="max-width: 800px; margin: 60px auto; padding: 40px 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; backdrop-filter: blur(10px);">
