@@ -177,19 +177,14 @@
             background: none;
             border: none;
             transition: all 0.4s ease;
-            aspect-ratio: 1;
         }
 
         .gallery-item img {
             width: 100%;
-            height: 100%;
+            height: auto;
             object-fit: cover;
             display: block;
-        }
-
-        /* Hide containers with broken images */
-        .gallery-item img[src*="render"]:not([src$=".png"]):not([src$=".jpg"]):not([src$=".webp"]) {
-            display: none;
+            aspect-ratio: 1;
         }
 
         .gallery-item:hover {
@@ -201,7 +196,7 @@
         .placeholder-image {
             width: 100%;
             height: 100%;
-            background: none;
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
