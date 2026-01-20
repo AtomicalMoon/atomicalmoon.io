@@ -2,7 +2,6 @@
 import type { GalleryItem as GalleryItemType } from '../types';
 
 export class GalleryItemComponent extends HTMLElement {
-  private item: GalleryItemType;
 
   constructor() {
     super();
@@ -22,7 +21,10 @@ export class GalleryItemComponent extends HTMLElement {
   }
 
   set data(item: GalleryItemType) {
-    this.item = item;
+    if (item.src) this.setAttribute('src', item.src);
+    if (item.alt) this.setAttribute('alt', item.alt);
+    if (item.title) this.setAttribute('title', item.title);
+    if (item.description) this.setAttribute('description', item.description);
     this.render();
   }
 

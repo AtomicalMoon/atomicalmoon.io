@@ -21,11 +21,12 @@ export class ParticleSystem {
   init(containerId: string): void {
     if (!this.config.enabled) return;
     
-    this.container = document.getElementById(containerId) as SVGSVGElement;
-    if (!this.container) {
-      console.error(`Container with id "${containerId}" not found`);
+    const el = document.getElementById(containerId);
+    if (!el || !(el instanceof SVGSVGElement)) {
+      console.error(`Container with id "${containerId}" not found or not an SVG`);
       return;
     }
+    this.container = el;
 
     // Group for connections to avoid removing other children
     this.connectionsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
