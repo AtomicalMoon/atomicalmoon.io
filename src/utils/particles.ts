@@ -1,6 +1,6 @@
 // TypeScript implementation of Particle System
 import type { Particle, SiteConfig } from '../types';
-import { loadWasmParticles, type WasmParticles } from './wasmParticles';
+// WASM loader removed; using JS fallback only
 
 export class ParticleSystem {
   private particles: Particle[] = [];
@@ -11,7 +11,7 @@ export class ParticleSystem {
   private connectionsGroup: SVGGElement | null = null;
   private connectionPool: SVGLineElement[] = [];
   private mouse = { x: 0, y: 0, active: false };
-  private wasm: WasmParticles | null = null;
+  // no WASM support in this build; JS-only
 
   constructor(config: SiteConfig['particles']) {
     this.config = config;
@@ -34,15 +34,8 @@ export class ParticleSystem {
 
     this.createParticles();
     this.setupInteractions();
-    // Try to load WASM; if successful use it for updates when possible
-    loadWasmParticles('/particles.wasm').then(w => {
-      this.wasm = w;
-      console.log('✅ Particle WASM loaded');
-    }).catch(() => {
-      // silently ignore - fallback to JS
-    }).finally(() => {
-      this.animationId = requestAnimationFrame(this.animateBound);
-    });
+    // Start the animation loop (JS-only implementation)
+    this.animationId = requestAnimationFrame(this.animateBound);
   }
 
   private createParticles(): void {
@@ -84,40 +77,7 @@ export class ParticleSystem {
     const maxDist = this.config.connectionDistance;
     const maxDistSq = maxDist * maxDist;
 
-    // If WASM is loaded and memory big enough, copy particle data into WASM memory,
-    // call updateParticles, then read back positions. This reduces per-particle work in JS.
-    if (this.wasm && this.wasm.floatView.buffer.byteLength >= (this.particles.length * 5 * 4)) {
-      const fv = this.wasm.floatView;
-      // copy particles: x,y,vx,vy,size
-      for (let i = 0; i < this.particles.length; i++) {
-        const p = this.particles[i];
-        const base = i * 5;
-        fv[base] = p.x;
-        fv[base + 1] = p.y;
-        fv[base + 2] = p.vx;
-        fv[base + 3] = p.vy;
-        fv[base + 4] = p.size;
-      }
-
-      try {
-        this.wasm.updateParticles(this.particles.length, 1 / 60, w, h);
-        // copy back positions and velocities
-        for (let i = 0; i < this.particles.length; i++) {
-          const base = i * 5;
-          const p = this.particles[i];
-          p.x = fv[base];
-          p.y = fv[base + 1];
-          p.vx = fv[base + 2];
-          p.vy = fv[base + 3];
-          p.element.setAttribute('cx', p.x.toString());
-          p.element.setAttribute('cy', p.y.toString());
-        }
-      } catch (e) {
-        // If WASM fails at runtime, drop it and fallback to JS
-        console.error('Particle WASM error, falling back to JS', e);
-        this.wasm = null;
-      }
-    } else {
+    {
       for (let i = 0, len = this.particles.length; i < len; i++) {
         const p = this.particles[i];
 

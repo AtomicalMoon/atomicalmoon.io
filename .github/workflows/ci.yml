@@ -56,15 +56,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Build WASM (optional)
-        run: |
-          if [ -f wasm/particles.wat ]; then
-            sudo apt-get update
-            sudo apt-get install -y wabt
-            wat2wasm wasm/particles.wat -o public/particles.wasm
-          else
-            echo "No wasm/particles.wat found; skipping."
-          fi
+      # WASM build removed — repo is frontend-only now
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
