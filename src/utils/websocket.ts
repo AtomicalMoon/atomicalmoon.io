@@ -5,7 +5,9 @@ export class WebSocketClient {
   private ws: WebSocket | null = null;
   private url: string;
   private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
+  private maxReconnectAttempts = 10;
+  private reconnectTimer: number | null = null;
+  private messageQueue: Array<{ type: string; data: any }> = [];
   private handlers: Map<string, MessageHandler[]> = new Map();
 
   constructor(url: string = 'ws://localhost:3001/ws') {
@@ -20,6 +22,11 @@ export class WebSocketClient {
         this.ws.onopen = () => {
           console.log('✅ WebSocket connected');
           this.reconnectAttempts = 0;
+          // flush queued messages
+          while (this.messageQueue.length && this.ws && this.ws.readyState === WebSocket.OPEN) {
+            const msg = this.messageQueue.shift()!;
+            this.ws.send(JSON.stringify(msg));
+          }
           resolve();
         };
 
@@ -34,7 +41,6 @@ export class WebSocketClient {
 
         this.ws.onerror = (error) => {
           console.error('WebSocket error:', error);
-          reject(error);
         };
 
         this.ws.onclose = () => {
@@ -48,20 +54,29 @@ export class WebSocketClient {
   }
 
   private reconnect(): void {
-    if (this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.reconnectAttempts++;
-      setTimeout(() => {
-        console.log(`Reconnecting... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
-        this.connect();
-      }, 1000 * this.reconnectAttempts);
-    }
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) return;
+    this.reconnectAttempts++;
+    const base = 1000;
+    const delay = Math.min(base * Math.pow(2, this.reconnectAttempts), 30000);
+    const jitter = Math.floor(Math.random() * 300);
+    const total = delay + jitter;
+    if (this.reconnectTimer) window.clearTimeout(this.reconnectTimer);
+    this.reconnectTimer = window.setTimeout(() => {
+      console.log(`Reconnecting... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+      this.connect();
+    }, total);
   }
 
   send(type: string, data: any): void {
+    const payload = { type, data };
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify({ type, data }));
+      this.ws.send(JSON.stringify(payload));
     } else {
-      console.warn('WebSocket is not connected');
+      // Buffer messages until connected
+      this.messageQueue.push(payload);
+      console.warn('WebSocket is not connected — message queued');
+      // Ensure we attempt reconnect if not already
+      if (!this.ws) this.connect().catch(() => {});
     }
   }
 
