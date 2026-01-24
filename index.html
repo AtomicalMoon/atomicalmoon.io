@@ -406,7 +406,7 @@
             const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             
             renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setClearColor(0xcacaca);
+            renderer.setClearColor(0x888888);  // Match secondary color
             container.appendChild(renderer.domElement);
 
             let mesh;
@@ -421,7 +421,7 @@
 
             const loader = new THREE.GLTFLoader();
             loader.load(
-                'models/model.glb',
+                './models/model.glb',  // Added ./ to specify relative path
                 function(gltf) {
                     mesh = gltf.scene;
                     mesh.scale.set(1, 1, 1);  // Adjust scale as needed
@@ -494,8 +494,7 @@
             directionalLight.position.set(5, 5, 5);
             scene.add(directionalLight);
 
-            camera.position.set(-8, 8, -25);  // Higher and further back
-            // Camera looks straight forward, not at center
+            camera.position.set(0, 0, 5);  // Reset to default position
 
             // Animation loop
             function animate() {
