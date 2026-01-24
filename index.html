@@ -432,8 +432,8 @@
                         mixer = new THREE.AnimationMixer(mesh);
                         
                         // Assuming animation 0 is idle, animation 1 is rare
-                        idleAction = mixer.clipAction(gltf.animations[0]);
-                        rareAction = mixer.clipAction(gltf.animations[1]);
+                        idleAction = mixer.clipAction(gltf.animations[1]);
+                        rareAction = mixer.clipAction(gltf.animations[0]);
                         
                         // Set idle to loop forever
                         idleAction.setLoop(THREE.LoopRepeat);
@@ -490,8 +490,8 @@
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
             scene.add(ambientLight);
 
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(5, 5, 5);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+            directionalLight.position.set(10, 30, 40);
             scene.add(directionalLight);
 
             camera.position.set(0, 20, 30);  // Reset to default position
