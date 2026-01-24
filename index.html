@@ -295,24 +295,9 @@
         <div class="about-content">
             <div>
                 <div id="canvas-container">
-                    <!-- SKETCHFAB EMBED METHOD -->
-                    <!-- Replace YOUR_MODEL_ID with your actual Sketchfab model ID -->
-                    <iframe id="api-frame" title="Your 3D Model" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/YOUR_MODEL_ID/embed?autostart=1&ui_theme=dark&ui_controls=1&ui_animations=1"></iframe>
-                    
-                    <!-- THREE.JS METHOD (Alternative) -->
-                    <!-- Uncomment the canvas div below if you want to use the Three.js loader instead -->
-                    <!-- <div id="threejs-canvas"></div> -->
+                    <!-- THREE.JS with custom animation control -->
+                    <div id="threejs-canvas" style="width: 100%; height: 100%;"></div>
                 </div>
-                
-                <!-- Animation Controls (Optional - uncomment to use) -->
-                <!-- 
-                <div style="text-align: center; margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
-                    <button onclick="playAnimation(0)" style="width: auto; padding: 0.5rem 1rem;">Animation 1</button>
-                    <button onclick="playAnimation(1)" style="width: auto; padding: 0.5rem 1rem;">Animation 2</button>
-                    <button onclick="playAnimation(2)" style="width: auto; padding: 0.5rem 1rem;">Animation 3</button>
-                </div>
-                -->
-                
                 <p class="canvas-info">3D Model Display</p>
             </div>
             <div>
@@ -413,121 +398,126 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
-        // ===== SKETCHFAB VIEWER API (for controlling animations) =====
-        // Uncomment this section if you want custom animation control buttons
-        /*
-        var iframe = document.getElementById('api-frame');
-        var client = new Sketchfab(iframe);
-        var api;
-
-        client.init('', {
-            success: function onSuccess(apiInstance) {
-                api = apiInstance;
-                api.start();
-                api.addEventListener('viewerready', function() {
-                    console.log('Viewer is ready');
-                    // Get list of animations
-                    api.getAnimations(function(err, animations) {
-                        if (!err) {
-                            console.log('Available animations:', animations);
-                        }
-                    });
-                });
-            },
-            error: function onError() {
-                console.log('Viewer error');
-            }
-        });
-
-        // Function to play specific animation
-        function playAnimation(index) {
-            if (api) {
-                api.setCurrentAnimationByUID(index);
-                api.play();
-            }
-        }
-        */
-
-        // ===== THREE.JS LOADER (COMMENTED OUT) =====
-        // Uncomment this section if you want to use the Three.js method instead
-        /*
         const container = document.getElementById('threejs-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setClearColor(0xf0f0f0);
-        container.appendChild(renderer.domElement);
+        if (container) {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setClearColor(0xcacaca);
+            container.appendChild(renderer.domElement);
 
-        // Variable to store the loaded model and animations
-        let mesh;
-        let mixer;
-        const clock = new THREE.Clock();
+            let mesh;
+            let mixer;
+            let idleAction, rareAction;
+            let currentAction;
+            const clock = new THREE.Clock();
+            
+            // Animation settings
+            const RARE_ANIMATION_CHANCE = 0.05; // 5% chance (adjust this: 0.01 = 1%, 0.10 = 10%, etc.)
+            const CHECK_INTERVAL = 5000; // Check every 5 seconds
 
-        // Load your own GLTF/GLB model with animations
-        const loader = new THREE.GLTFLoader();
-        loader.load(
-            'models/your-model.glb',  // Replace with your model path
-            function(gltf) {
-                mesh = gltf.scene;
-                mesh.scale.set(1, 1, 1);  // Adjust scale as needed
-                scene.add(mesh);
-                
-                // Setup animations if the model has them
-                if (gltf.animations && gltf.animations.length > 0) {
-                    mixer = new THREE.AnimationMixer(mesh);
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+                'models/your-model.glb',  // Replace with your model path
+                function(gltf) {
+                    mesh = gltf.scene;
+                    mesh.scale.set(1, 1, 1);  // Adjust scale as needed
+                    scene.add(mesh);
                     
-                    // Play all animations
-                    gltf.animations.forEach((clip) => {
-                        mixer.clipAction(clip).play();
-                    });
+                    if (gltf.animations && gltf.animations.length >= 2) {
+                        mixer = new THREE.AnimationMixer(mesh);
+                        
+                        // Assuming animation 0 is idle, animation 1 is rare
+                        idleAction = mixer.clipAction(gltf.animations[0]);
+                        rareAction = mixer.clipAction(gltf.animations[1]);
+                        
+                        // Set idle to loop forever
+                        idleAction.setLoop(THREE.LoopRepeat);
+                        idleAction.play();
+                        currentAction = idleAction;
+                        
+                        // Set rare animation to play once then stop
+                        rareAction.setLoop(THREE.LoopOnce);
+                        rareAction.clampWhenFinished = true;
+                        
+                        // Periodically check if we should play rare animation
+                        setInterval(tryPlayRareAnimation, CHECK_INTERVAL);
+                        
+                        // Listen for when rare animation finishes
+                        mixer.addEventListener('finished', function(e) {
+                            if (e.action === rareAction) {
+                                // Rare animation finished, go back to idle
+                                rareAction.stop();
+                                idleAction.reset();
+                                idleAction.play();
+                                currentAction = idleAction;
+                            }
+                        });
+                    } else if (gltf.animations && gltf.animations.length > 0) {
+                        // Only one animation, just loop it
+                        mixer = new THREE.AnimationMixer(mesh);
+                        const action = mixer.clipAction(gltf.animations[0]);
+                        action.play();
+                    }
+                },
+                function(xhr) {
+                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                },
+                function(error) {
+                    console.error('Error loading model:', error);
                 }
-            },
-            function(xhr) {
-                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-            },
-            function(error) {
-                console.error('Error loading model:', error);
-            }
-        );
-
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(5, 5, 5);
-        scene.add(directionalLight);
-
-        camera.position.z = 5;
-
-        // No rotation - model stays static
-
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
+            );
             
-            // Update animation mixer if it exists
-            if (mixer) {
-                const delta = clock.getDelta();
-                mixer.update(delta);
+            function tryPlayRareAnimation() {
+                // Only try if we have both animations and currently playing idle
+                if (idleAction && rareAction && currentAction === idleAction) {
+                    const random = Math.random();
+                    if (random < RARE_ANIMATION_CHANCE) {
+                        // Play rare animation!
+                        idleAction.stop();
+                        rareAction.reset();
+                        rareAction.play();
+                        currentAction = rareAction;
+                    }
+                }
             }
-            
-            renderer.render(scene, camera);
+
+            // Add lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+
+            camera.position.z = 5;
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                if (mixer) {
+                    const delta = clock.getDelta();
+                    mixer.update(delta);
+                }
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            });
         }
-        animate();
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            const width = container.clientWidth;
-            const height = container.clientHeight;
-            
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-            renderer.setSize(width, height);
-        });
-        */
 
         // Contact form
         document.querySelector('.contact-form').addEventListener('submit', function(e) {
