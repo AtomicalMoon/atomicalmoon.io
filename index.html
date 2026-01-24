@@ -16,6 +16,41 @@
             line-height: 1.6;
             color: #ffffff;
             background-color: #cacaca;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            animation: float ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(-100px) translateX(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(25vh) translateX(30px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(50vh) translateX(-20px) rotate(180deg);
+            }
+            75% {
+                transform: translateY(75vh) translateX(40px) rotate(270deg);
+            }
+            100% {
+                transform: translateY(100vh) translateX(-10px) rotate(360deg);
+            }
         }
 
         header {
@@ -276,6 +311,8 @@
     </style>
 </head>
 <body>
+    <div id="particles"></div>
+    
     <header>
         <h1>AtomicalMoon</h1>
         <p>Texturer / Modeler / Renderer</p>
@@ -295,14 +332,14 @@
         <div class="about-content">
             <div>
                 <div id="canvas-container">
-                    <!-- THREE.JS with custom animation control -->
-                    <div id="threejs-canvas" style="width: 100%; height: 100%;"></div>
+                    <!-- Image display instead of 3D model -->
+                    <img src="images/character.png" alt="Character" style="width: 100%; height: 100%; object-fit: contain;">
                 </div>
-                <p class="canvas-info">3D Model Display</p>
+                <p class="canvas-info">Character Display</p>
             </div>
             <div>
-                <p>Hello. My name is AtomicalMoon, otherwise reffered to as moon or atomic. ive been in the blockbench community for about 3-4 years. im able to do stuff like textures, models, renders, and basic art.</p>
-                <p style="margin-top: 1rem;">im always up to learn and gain some more techniques and knowledge(execpt for coding..). .</p>
+                <p>Hello. My name is AtomicalMoon, otherwise reffered to as moon or atomic. ive been in the blockbench community for about 3-4 years. im able to do stuff like textures, models, renders, and basic animations.</p>
+                <p style="margin-top: 1rem;">im always up to learn and gain some more techniques and knowledge(except for coding..).</p>
             </div>
         </div>
     </section>
@@ -311,16 +348,28 @@
         <h2>Skills</h2>
         <div class="skills">
             <div class="skill">
-                <h3>Models</h3>
+                <h3>HTML/CSS</h3>
                 <p>Expert</p>
             </div>
             <div class="skill">
-                <h3>Textures</h3>
-                <p>Expert</p>
+                <h3>JavaScript</h3>
+                <p>Advanced</p>
             </div>
             <div class="skill">
-                <h3>Renders</h3>
-                <p>Expert</p>
+                <h3>React</h3>
+                <p>Intermediate</p>
+            </div>
+            <div class="skill">
+                <h3>Node.js</h3>
+                <p>Intermediate</p>
+            </div>
+            <div class="skill">
+                <h3>Git/GitHub</h3>
+                <p>Advanced</p>
+            </div>
+            <div class="skill">
+                <h3>UI/UX Design</h3>
+                <p>Intermediate</p>
             </div>
         </div>
     </section>
@@ -386,126 +435,54 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
-        const container = document.getElementById('threejs-canvas');
+        // Particle background animation
+        const particlesContainer = document.getElementById('particles');
+        const particleImages = [
+            'images/particle1.png',  // First particle image
+            'images/particle2.png'   // Second particle image
+        ];
         
-        if (container) {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        // Create floating particles
+        function createParticle() {
+            const particle = document.createElement('img');
+            const randomImage = particleImages[Math.floor(Math.random() * particleImages.length)];
+            particle.src = randomImage;
+            particle.className = 'particle';
             
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setClearColor(0x888888);  // Match secondary color
-            container.appendChild(renderer.domElement);
-
-            let mesh;
-            let mixer;
-            let idleAction, rareAction;
-            let currentAction;
-            const clock = new THREE.Clock();
+            // Random size between 15-50px
+            const size = Math.random() * 35 + 15;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
             
-            // Animation settings
-            const RARE_ANIMATION_CHANCE = 0.05; // 5% chance (adjust this: 0.01 = 1%, 0.10 = 10%, etc.)
-            const CHECK_INTERVAL = 5000; // Check every 5 seconds
-
-            const loader = new THREE.GLTFLoader();
-            loader.load(
-                './models/model.glb',  // Added ./ to specify relative path
-                function(gltf) {
-                    mesh = gltf.scene;
-                    mesh.scale.set(1, 1, 1);  // Adjust scale as needed
-                    mesh.rotation.y = 0;  // Front facing
-                    scene.add(mesh);
-                    
-                    if (gltf.animations && gltf.animations.length >= 2) {
-                        mixer = new THREE.AnimationMixer(mesh);
-                        
-                        // Assuming animation 0 is idle, animation 1 is rare
-                        idleAction = mixer.clipAction(gltf.animations[1]);
-                        rareAction = mixer.clipAction(gltf.animations[0]);
-                        
-                        // Set idle to loop forever
-                        idleAction.setLoop(THREE.LoopRepeat);
-                        idleAction.play();
-                        currentAction = idleAction;
-                        
-                        // Set rare animation to play once then stop
-                        rareAction.setLoop(THREE.LoopOnce);
-                        rareAction.clampWhenFinished = true;
-                        
-                        // Periodically check if we should play rare animation
-                        setInterval(tryPlayRareAnimation, CHECK_INTERVAL);
-                        
-                        // Listen for when rare animation finishes
-                        mixer.addEventListener('finished', function(e) {
-                            if (e.action === rareAction) {
-                                // Rare animation finished, go back to idle
-                                rareAction.stop();
-                                idleAction.reset();
-                                idleAction.play();
-                                currentAction = idleAction;
-                            }
-                        });
-                    } else if (gltf.animations && gltf.animations.length > 0) {
-                        // Only one animation, just loop it
-                        mixer = new THREE.AnimationMixer(mesh);
-                        const action = mixer.clipAction(gltf.animations[0]);
-                        action.play();
-                    }
-                },
-                function(xhr) {
-                    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-                },
-                function(error) {
-                    console.error('Error loading model:', error);
-                }
-            );
+            // Random horizontal position
+            particle.style.left = Math.random() * 100 + '%';
             
-            function tryPlayRareAnimation() {
-                // Only try if we have both animations and currently playing idle
-                if (idleAction && rareAction && currentAction === idleAction) {
-                    const random = Math.random();
-                    if (random < RARE_ANIMATION_CHANCE) {
-                        // Play rare animation!
-                        idleAction.stop();
-                        rareAction.reset();
-                        rareAction.play();
-                        currentAction = rareAction;
-                    }
-                }
-            }
-
-            // Add lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
-            directionalLight.position.set(10, 30, 40);
-            scene.add(directionalLight);
-
-            camera.position.set(0, 20, 30);  // Reset to default position
-
-            // Animation loop
-            function animate() {
-                requestAnimationFrame(animate);
-                
-                if (mixer) {
-                    const delta = clock.getDelta();
-                    mixer.update(delta);
-                }
-                
-                renderer.render(scene, camera);
-            }
-            animate();
-
-            // Handle window resize
-            window.addEventListener('resize', () => {
-                const width = container.clientWidth;
-                const height = container.clientHeight;
-                
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-                renderer.setSize(width, height);
-            });
+            // Random starting position (above viewport)
+            particle.style.top = '-100px';
+            
+            // Random animation duration (8-15 seconds for falling)
+            const duration = Math.random() * 7 + 8;
+            particle.style.animationDuration = duration + 's';
+            
+            // Random delay
+            const delay = Math.random() * 3;
+            particle.style.animationDelay = delay + 's';
+            
+            // Random opacity
+            particle.style.opacity = Math.random() * 0.3 + 0.2;  // 0.2 to 0.5
+            
+            particlesContainer.appendChild(particle);
+            
+            // Remove particle after animation completes and create a new one
+            setTimeout(() => {
+                particle.remove();
+                createParticle();
+            }, (duration + delay) * 1000);
+        }
+        
+        // Create initial particles
+        for (let i = 0; i < 20; i++) {
+            setTimeout(() => createParticle(), i * 400);
         }
 
         // Contact form
