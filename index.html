@@ -543,7 +543,7 @@
     <script>
         // ===== ADMIN PANEL SYSTEM =====
         const ADMIN_PASSWORD = 'test'; // CHANGE THIS!
-        const GITHUB_TOKEN = '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'; // Add your GitHub token
+        const GITHUB_TOKEN = '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'; // Add your GitHub token
         const GITHUB_REPO = 'AtomicalMoon/atomicalmoon.com'; // Your repo
         const CONFIG_FILE = 'site-config.json';
         
@@ -581,7 +581,7 @@
             }
         }
         
-        // Save config to GitHub
+        // Save config to GitHub using GraphQL API
         async function saveConfig() {
             if (!GITHUB_TOKEN || GITHUB_TOKEN === 'YOUR_GITHUB_TOKEN_HERE') {
                 alert('Please add your GitHub token to the code first!');
@@ -589,88 +589,110 @@
             }
             
             try {
-                console.log('Attempting to save config...');
+                console.log('Attempting to save config via GraphQL...');
                 console.log('Repo:', GITHUB_REPO);
-                console.log('File:', CONFIG_FILE);
                 console.log('Config:', siteConfig);
                 
-                // Get current file SHA
-                const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${CONFIG_FILE}`;
-                console.log('GET URL:', getUrl);
-                
-                const getResponse = await fetch(getUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'User-Agent': 'Portfolio-Admin'
-                    }
-                });
-                
-                console.log('Get response status:', getResponse.status);
-                
-                let sha = null;
-                if (getResponse.ok) {
-                    const data = await getResponse.json();
-                    sha = data.sha;
-                    console.log('Found existing file with SHA:', sha);
-                } else if (getResponse.status === 404) {
-                    console.log('File does not exist yet, will create new');
-                } else {
-                    const errorText = await getResponse.text();
-                    console.error('Get file error:', errorText);
-                    throw new Error(`Failed to check file: ${getResponse.status}`);
-                }
-                
-                // Prepare content
+                const [owner, repo] = GITHUB_REPO.split('/');
                 const configJson = JSON.stringify(siteConfig, null, 2);
-                const content = btoa(unescape(encodeURIComponent(configJson))); // Proper UTF-8 encoding
+                const content = btoa(unescape(encodeURIComponent(configJson)));
                 
-                const requestBody = {
-                    message: 'Update commission status via admin panel',
-                    content: content,
-                    branch: 'main'
-                };
+                // First, get the repository ID and file OID (if exists)
+                const queryGetFile = `
+                    query {
+                        repository(owner: "${owner}", name: "${repo}") {
+                            id
+                            object(expression: "HEAD:${CONFIG_FILE}") {
+                                ... on Blob {
+                                    oid
+                                }
+                            }
+                        }
+                    }
+                `;
                 
-                if (sha) {
-                    requestBody.sha = sha;
-                }
-                
-                console.log('Request body:', requestBody);
-                
-                // Update or create file
-                const putUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${CONFIG_FILE}`;
-                console.log('PUT URL:', putUrl);
-                
-                const response = await fetch(putUrl, {
-                    method: 'PUT',
+                console.log('Querying for file...');
+                const queryResponse = await fetch('https://api.github.com/graphql', {
+                    method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json',
-                        'User-Agent': 'Portfolio-Admin'
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(requestBody)
+                    body: JSON.stringify({ query: queryGetFile })
                 });
                 
-                console.log('Update response status:', response.status);
+                if (!queryResponse.ok) {
+                    throw new Error(`GraphQL query failed: ${queryResponse.status}`);
+                }
                 
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Save successful:', result);
+                const queryData = await queryResponse.json();
+                console.log('Query response:', queryData);
+                
+                if (queryData.errors) {
+                    throw new Error(queryData.errors[0].message);
+                }
+                
+                const repoId = queryData.data.repository.id;
+                const fileOid = queryData.data.repository.object?.oid;
+                
+                console.log('Repository ID:', repoId);
+                console.log('File OID:', fileOid);
+                
+                // Create or update file using mutation
+                const mutation = `
+                    mutation {
+                        createCommitOnBranch(input: {
+                            branch: {
+                                repositoryNameWithOwner: "${GITHUB_REPO}",
+                                branchName: "main"
+                            },
+                            message: {
+                                headline: "Update commission status via admin panel"
+                            },
+                            fileChanges: {
+                                additions: [{
+                                    path: "${CONFIG_FILE}",
+                                    contents: "${content}"
+                                }]
+                            },
+                            expectedHeadOid: "${fileOid || ''}"
+                        }) {
+                            commit {
+                                url
+                            }
+                        }
+                    }
+                `;
+                
+                console.log('Sending mutation...');
+                const mutationResponse = await fetch('https://api.github.com/graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ query: mutation })
+                });
+                
+                if (!mutationResponse.ok) {
+                    throw new Error(`GraphQL mutation failed: ${mutationResponse.status}`);
+                }
+                
+                const mutationData = await mutationResponse.json();
+                console.log('Mutation response:', mutationData);
+                
+                if (mutationData.errors) {
+                    throw new Error(mutationData.errors[0].message);
+                }
+                
+                if (mutationData.data.createCommitOnBranch) {
+                    console.log('Save successful!');
                     alert('✅ Configuration saved successfully!');
                     updateStatusDisplay();
                 } else {
-                    const errorText = await response.text();
-                    console.error('Save error response:', errorText);
-                    let errorData;
-                    try {
-                        errorData = JSON.parse(errorText);
-                    } catch (e) {
-                        errorData = { message: errorText };
-                    }
-                    throw new Error(errorData.message || `HTTP ${response.status}`);
+                    throw new Error('Unexpected response from GraphQL');
                 }
+                
             } catch (error) {
                 console.error('Catch error:', error);
                 alert('❌ Error saving: ' + error.message);
