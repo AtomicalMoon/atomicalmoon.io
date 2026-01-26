@@ -542,9 +542,9 @@
 
     <script>
         // ===== ADMIN PANEL SYSTEM =====
-        const ADMIN_PASSWORD = 'TESTPASS123'; // CHANGE THIS!
-        const GITHUB_TOKEN = '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'; // Add your GitHub token
-        const GITHUB_REPO = 'https://github.com/AtomicalMoon/atomicalmoon.com'; // Your repo
+        const ADMIN_PASSWORD = 'your-secure-password'; // CHANGE THIS!
+        const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN_HERE'; // Add your GitHub token
+        const GITHUB_REPO = 'yourusername/yourusername.github.io'; // Your repo
         const CONFIG_FILE = 'site-config.json';
         
         let siteConfig = {
@@ -589,41 +589,60 @@
             }
             
             try {
+                console.log('Attempting to save config...');
+                console.log('Repo:', GITHUB_REPO);
+                
                 // Get current file SHA
                 const getResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${CONFIG_FILE}`, {
                     headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
                     }
                 });
+                
+                console.log('Get response status:', getResponse.status);
                 
                 let sha = null;
                 if (getResponse.ok) {
                     const data = await getResponse.json();
                     sha = data.sha;
+                    console.log('Found existing file with SHA:', sha);
+                } else {
+                    const errorData = await getResponse.json();
+                    console.error('Get file error:', errorData);
                 }
                 
                 // Update or create file
                 const content = btoa(JSON.stringify(siteConfig, null, 2));
+                const requestBody = {
+                    message: 'Update site configuration',
+                    content: content,
+                    ...(sha && { sha })
+                };
+                
+                console.log('Sending update request...');
                 const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${CONFIG_FILE}`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        message: 'Update site configuration',
-                        content: content,
-                        sha: sha
-                    })
+                    body: JSON.stringify(requestBody)
                 });
+                
+                console.log('Update response status:', response.status);
                 
                 if (response.ok) {
                     alert('Configuration saved successfully!');
                     updateStatusDisplay();
                 } else {
-                    alert('Failed to save configuration');
+                    const errorData = await response.json();
+                    console.error('Save error:', errorData);
+                    alert('Failed to save: ' + (errorData.message || 'Unknown error'));
                 }
             } catch (error) {
+                console.error('Catch error:', error);
                 alert('Error saving: ' + error.message);
             }
         }
