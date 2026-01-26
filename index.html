@@ -542,9 +542,9 @@
 
     <script>
         // ===== ADMIN PANEL SYSTEM =====
-        const ADMIN_PASSWORD = 'TEST'; // CHANGE THIS!
-        const GITHUB_TOKEN = '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'; // Add your GitHub token
-        const GITHUB_REPO = 'https://github.com/AtomicalMoon/atomicalmoon.com'; // Your repo
+        const ADMIN_PASSWORD = 'test'; // CHANGE THIS!
+        const GITHUB_TOKEN = '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'; // Add your GitHub token
+        const GITHUB_REPO = 'AtomicalMoon/atomicalmoon.com'; // Your repo
         const CONFIG_FILE = 'site-config.json';
         
         let siteConfig = {
@@ -591,12 +591,19 @@
             try {
                 console.log('Attempting to save config...');
                 console.log('Repo:', GITHUB_REPO);
+                console.log('File:', CONFIG_FILE);
+                console.log('Config:', siteConfig);
                 
                 // Get current file SHA
-                const getResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${CONFIG_FILE}`, {
+                const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${CONFIG_FILE}`;
+                console.log('GET URL:', getUrl);
+                
+                const getResponse = await fetch(getUrl, {
+                    method: 'GET',
                     headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
+                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'Portfolio-Admin'
                     }
                 });
                 
@@ -607,26 +614,41 @@
                     const data = await getResponse.json();
                     sha = data.sha;
                     console.log('Found existing file with SHA:', sha);
+                } else if (getResponse.status === 404) {
+                    console.log('File does not exist yet, will create new');
                 } else {
-                    const errorData = await getResponse.json();
-                    console.error('Get file error:', errorData);
+                    const errorText = await getResponse.text();
+                    console.error('Get file error:', errorText);
+                    throw new Error(`Failed to check file: ${getResponse.status}`);
                 }
                 
-                // Update or create file
-                const content = btoa(JSON.stringify(siteConfig, null, 2));
+                // Prepare content
+                const configJson = JSON.stringify(siteConfig, null, 2);
+                const content = btoa(unescape(encodeURIComponent(configJson))); // Proper UTF-8 encoding
+                
                 const requestBody = {
-                    message: 'Update site configuration',
+                    message: 'Update commission status via admin panel',
                     content: content,
-                    ...(sha && { sha })
+                    branch: 'main'
                 };
                 
-                console.log('Sending update request...');
-                const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${CONFIG_FILE}`, {
+                if (sha) {
+                    requestBody.sha = sha;
+                }
+                
+                console.log('Request body:', requestBody);
+                
+                // Update or create file
+                const putUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${CONFIG_FILE}`;
+                console.log('PUT URL:', putUrl);
+                
+                const response = await fetch(putUrl, {
                     method: 'PUT',
                     headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
                         'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'Portfolio-Admin'
                     },
                     body: JSON.stringify(requestBody)
                 });
@@ -634,16 +656,24 @@
                 console.log('Update response status:', response.status);
                 
                 if (response.ok) {
-                    alert('Configuration saved successfully!');
+                    const result = await response.json();
+                    console.log('Save successful:', result);
+                    alert('✅ Configuration saved successfully!');
                     updateStatusDisplay();
                 } else {
-                    const errorData = await response.json();
-                    console.error('Save error:', errorData);
-                    alert('Failed to save: ' + (errorData.message || 'Unknown error'));
+                    const errorText = await response.text();
+                    console.error('Save error response:', errorText);
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(errorText);
+                    } catch (e) {
+                        errorData = { message: errorText };
+                    }
+                    throw new Error(errorData.message || `HTTP ${response.status}`);
                 }
             } catch (error) {
                 console.error('Catch error:', error);
-                alert('Error saving: ' + error.message);
+                alert('❌ Error saving: ' + error.message);
             }
         }
         
