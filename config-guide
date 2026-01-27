@@ -1,0 +1,140 @@
+# Portfolio Configuration Reference Guide
+
+This file is a quick reference for all configuration options in the `/config` folder.  
+**Note:** This file does NOT affect your site - it's just documentation for your reference!
+
+---
+
+## 📋 Commission Status
+
+**File:** `config/commission-status.json`
+
+**What it does:** Controls the commission status display at the top of the About Me section.
+
+**Available Options:**
+
+| Status Value | Display Text | Color | When to Use |
+|-------------|--------------|-------|-------------|
+| `"open"` | OPEN | 🟢 Green | Actively accepting new commissions |
+| `"closed"` | CLOSED | 🔴 Red | Not accepting any commissions right now |
+| `"full"` | FULL | 🟡 Yellow | Commission slots are all filled |
+| `"waitlist"` | WAITLIST | 🔵 Blue | Not taking new commissions but accepting waitlist |
+| `"paused"` | PAUSED | 🟣 Purple | Temporarily paused (vacation, break, etc.) |
+| `"2 slots"` | 2 SLOTS | 🟢 Green | Showing specific number of available slots |
+| `"3 slots"` | 3 SLOTS | 🟢 Green | Works with any number + "slots" |
+| `"custom text"` | CUSTOM TEXT | ⚪ White | Any other text you want (default white) |
+
+**Example Usage:**
+```json
+{
+  "status": "open"
+}
+```
+
+**How to Change:**
+1. Go to `config/commission-status.json` on GitHub
+2. Click the pencil icon (Edit)
+3. Change the status value
+4. Commit changes
+5. Wait 1-2 minutes for site to update
+
+---
+
+## 🚀 Future Configuration Options
+
+### (Not Yet Implemented - Placeholders for Future Features)
+
+---
+
+### 📢 Site Announcements
+**File:** `config/announcements.json` *(coming soon)*
+
+**What it will do:** Display a banner announcement at the top of the site.
+
+**Example Structure:**
+```json
+{
+  "enabled": true,
+  "message": "New commissions opening January 30th!",
+  "type": "info"
+}
+```
+
+---
+
+### ⭐ Featured Projects
+**File:** `config/featured-projects.json` *(coming soon)*
+
+**What it will do:** Control which projects appear in the "Featured" section.
+
+**Example Structure:**
+```json
+{
+  "featured": [
+    "project-id-1",
+    "project-id-2",
+    "project-id-3"
+  ]
+}
+```
+
+---
+
+### 🔗 Social Links
+**File:** `config/social-links.json` *(coming soon)*
+
+**What it will do:** Manage social media links in the footer without editing HTML.
+
+**Example Structure:**
+```json
+{
+  "github": "https://github.com/yourusername",
+  "twitter": "https://twitter.com/yourusername",
+  "discord": "YourDiscordTag#1234"
+}
+```
+
+---
+
+### 🎨 Theme Settings
+**File:** `config/theme.json` *(coming soon)*
+
+**What it will do:** Control site colors and appearance settings.
+
+**Example Structure:**
+```json
+{
+  "primaryColor": "#888888",
+  "backgroundColor": "#cacaca",
+  "accentColor": "#ffffff"
+}
+```
+
+---
+
+## 📝 Notes
+
+- All files in `/config` should be valid JSON format
+- Changes take 1-2 minutes to appear on the live site
+- Always test after making changes
+- Keep backups of your config files before major changes
+- File names are case-sensitive!
+
+---
+
+## 🆘 Troubleshooting
+
+**Status not updating?**
+- Check if file name is exactly `commission-status.json`
+- Verify JSON format is valid (use jsonlint.com)
+- Wait 2-3 minutes for GitHub Pages to rebuild
+- Hard refresh your browser (Ctrl+Shift+R)
+
+**Color not showing?**
+- Make sure status value is lowercase
+- Check spelling matches exactly (e.g., "closed" not "Closed")
+- For custom status, it will default to white
+
+---
+
+*Last Updated: January 2026*
