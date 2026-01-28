@@ -1,7 +1,126 @@
-<img src="images/renders/player-renders/player-1.png" alt="Player Render">
-<img src="images/renders/player-renders/player-1.png" alt="Player Render">
-<img src="images/renders/player-renders/player-1.png" alt="Player Render">
-<img src="images/renders/player-renders/player-1.png" alt="Player Render">
-<img src="images/renders/player-renders/player-1.png" alt="Player Render">
-<img src="images/renders/player-renders/player-1.png" alt="Player Render">
-<img src="images/renders/player-renders/player-1.png" alt="Player Render">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtomicalMoon - Commission Info</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height:1.6; color:#f0f0f0; background:#0f0f0f;
+        }
+        header {
+            background:linear-gradient(135deg,#1e1e1e 0%,#0f0f0f 100%);
+            color:white; padding:4rem 2rem; text-align:center;
+        }
+        header h1 { font-size:2.5rem; margin-bottom:0.5rem; }
+        header p { font-size:1.2rem; opacity:0.9; }
+        nav {
+            background:#111111; box-shadow:0 2px 10px rgba(0,0,0,0.5);
+            position:sticky; top:0; z-index:100;
+        }
+        nav ul {
+            list-style:none; display:flex; justify-content:center; padding:1rem; flex-wrap:wrap;
+        }
+        nav a {
+            color:#60a5fa; text-decoration:none; padding:0.5rem 1.5rem;
+            transition:color 0.3s; font-weight:500;
+        }
+        nav a:hover { color:#a78bfa; }
+        section { max-width:1200px; margin:0 auto; padding:4rem 2rem; }
+        h2 { font-size:2rem; margin-bottom:2rem; color:#ffffff; text-align:center; }
+        .commission-sheet {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(400px,1fr)); gap:2rem;
+        }
+        .sheet-card {
+            background:#1e1e1e; border-radius:12px; overflow:hidden;
+            box-shadow:0 8px 25px rgba(0,0,0,0.6); transition:transform 0.3s,box-shadow 0.3s;
+            border:1px solid #333333;
+        }
+        .sheet-card:hover {
+            transform:translateY(-8px); box-shadow:0 15px 35px rgba(0,0,0,0.8);
+        }
+        .sheet-image {
+            height:500px; background:#111111; position:relative;
+        }
+        .sheet-image img {
+            width:100%; height:100%; object-fit:contain; display:block;
+        }
+        .sheet-info {
+            padding:1.5rem; text-align:center;
+        }
+        .sheet-info h3 {
+            font-size:1.4rem; margin-bottom:0.75rem; color:#60a5fa;
+        }
+        .sheet-info p {
+            color:#d0d0d0; font-size:1rem;
+        }
+        .back-btn {
+            display:inline-block; margin-top:1rem;
+            color:#60a5fa; text-decoration:none; font-weight:500;
+        }
+        .back-btn:hover { color:#a78bfa; text-decoration:underline; }
+        footer {
+            background:#111111; color:#a0a0a0; text-align:center; padding:2rem;
+        }
+        @media (max-width:768px) {
+            .commission-sheet { grid-template-columns:1fr; }
+            .sheet-image { height:400px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Commission Info</h1>
+        <p>Pricing • Terms • Examples</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Back to Portfolio</a></li>
+        </ul>
+    </nav>
+    <section>
+        <h2>Commission Sheets</h2>
+        <div class="commission-sheet">
+            <div class="sheet-card">
+                <div class="sheet-image">
+                    <img src="images/comm-sheet-1.png" alt="Commission Sheet 1">
+                </div>
+                <div class="sheet-info">
+                    <h3>Full Sheet 2025</h3>
+                    <p>Current pricing, slots, terms, and examples</p>
+                </div>
+            </div>
+            <div class="sheet-card">
+                <div class="sheet-image">
+                    <img src="images/comm-sheet-2.png" alt="Commission Sheet 2">
+                </div>
+                <div class="sheet-info">
+                    <h3>Pricing Breakdown</h3>
+                    <p>Detailed costs for models, textures, renders</p>
+                </div>
+            </div>
+            <div class="sheet-card">
+                <div class="sheet-image">
+                    <img src="images/comm-sheet-3.png" alt="Commission Sheet 3">
+                </div>
+                <div class="sheet-info">
+                    <h3>Terms & Process</h3>
+                    <p>Payment, revisions, deadlines, rights</p>
+                </div>
+            </div>
+            <!-- Add more sheets as needed -->
+        </div>
+        <p style="text-align:center; margin-top:3rem;">
+            <a href="index.html" class="back-btn">← Back to Main Portfolio</a>
+        </p>
+    </section>
+    <footer>
+        <p>© <span id="year"></span> AtomicalMoon. All rights reserved.</p>
+    </footer>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
