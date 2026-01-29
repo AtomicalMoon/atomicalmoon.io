@@ -108,6 +108,98 @@
             .about-content { grid-template-columns:1fr; }
             .category-header { flex-direction:column; gap:1rem; }
         }
+        .commission-frame {
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            border-radius: 9999px; /* Pill shape */
+            background: rgba(15, 15, 15, 0.8); /* Dark semi-transparent bg */
+            padding: 0.5rem 2rem;
+            margin: 0 auto 2rem auto;
+            width: fit-content;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+            backdrop-filter: blur(5px); /* Optional: Glassy effect if supported */
+        }
+
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Behind text */
+            pointer-events: none;
+        }
+
+        .commission-text {
+            position: relative;
+            z-index: 1; /* In front of particles */
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+            color: #f0f0f0;
+        }
+
+        #status-text {
+            transition: color 0.3s;
+        }
+
+        /* Glowing pulsating text */
+        #status-text.glowing {
+            animation: glow-pulse 3s ease-in-out infinite; /* Slow pulse */
+        }
+
+        @keyframes glow-pulse {
+            0% {
+                text-shadow: 0 0 2px currentColor, 0 0 4px currentColor;
+            }
+            50% {
+                text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
+            }
+            100% {
+                text-shadow: 0 0 2px currentColor, 0 0 4px currentColor;
+            }
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.6; /* Semi-transparent */
+            will-change: transform;
+            animation: fall 15s linear infinite; /* Base duration; randomized in JS */
+        }
+
+        /* Falling leaves animation with sway and rotation */
+        @keyframes fall {
+            0% {
+                transform: translateY(-150%) translateX(0) rotate(0deg);
+                opacity: 0.6;
+            }
+            20% {
+                transform: translateY(20%) translateX(3%) rotate(45deg);
+            }
+            40% {
+                transform: translateY(40%) translateX(-3%) rotate(90deg);
+            }
+            60% {
+                transform: translateY(60%) translateX(3%) rotate(135deg);
+            }
+            80% {
+                transform: translateY(80%) translateX(-3%) rotate(180deg);
+            }
+            100% {
+                transform: translateY(150%) translateX(0) rotate(360deg);
+                opacity: 0.3; /* Fade out slightly at bottom */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .commission-frame {
+                padding: 0.4rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -130,10 +222,9 @@
     </nav>
     <section id="about">
         <h2>About Me</h2>
-        <div id="commission-status-display" style="text-align:center; margin-bottom:2rem;">
-            <p style="font-size:1.2rem; font-weight:600;">
-                Commissions: <span id="status-text">Loading...</span>
-            </p>
+        <div id="commission-status-display" class="commission-frame">
+            <div class="particles-container"></div>
+            <p class="commission-text">Commissions: <span id="status-text">Loading...</span></p>
         </div>
         <div class="about-content">
             <div>
@@ -163,7 +254,6 @@
     </section>
     <section id="projects">
         <h2>Portfolio</h2>
-
         <!-- Models -->
         <div class="category-header" onclick="toggleSub(this)">
             <h3>Models</h3>
@@ -187,7 +277,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="category-header" onclick="toggleSub(this)"><h3>Medium</h3></div>
             <div class="subcategory projects-grid active">
                 <div class="project-card">
@@ -205,7 +294,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="category-header" onclick="toggleSub(this)"><h3>Small</h3></div>
             <div class="subcategory projects-grid active">
                 <div class="project-card">
@@ -224,7 +312,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Blocks -->
         <div class="category-header" onclick="toggleSub(this)">
             <h3>Blocks</h3>
@@ -241,7 +328,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="category-header" onclick="toggleSub(this)"><h3>Custom Geometry</h3></div>
             <div class="subcategory projects-grid active">
                 <div class="project-card">
@@ -260,7 +346,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Items -->
         <div class="category-header" onclick="toggleSub(this)">
             <h3>Items</h3>
@@ -277,7 +362,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="category-header" onclick="toggleSub(this)"><h3>32x32</h3></div>
             <div class="subcategory projects-grid active">
                 <div class="project-card">
@@ -288,7 +372,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="category-header" onclick="toggleSub(this)"><h3>64x64</h3></div>
             <div class="subcategory projects-grid active">
                 <div class="project-card">
@@ -300,7 +383,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Renders -->
         <div class="category-header" onclick="toggleSub(this)">
             <h3>Renders</h3>
@@ -317,7 +399,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="category-header" onclick="toggleSub(this)"><h3>Generic Renders</h3></div>
             <div class="subcategory projects-grid active">
                 <div class="project-card">
@@ -329,7 +410,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Commissioned Work -->
         <div class="category-header" onclick="toggleSub(this)">
             <h3>Commissioned Work</h3>
@@ -366,7 +446,6 @@
     </footer>
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
-
         async function loadCommissionStatus() {
             const t = document.getElementById('status-text');
             t.textContent = 'Loading...';
@@ -380,12 +459,14 @@
             } catch {
                 updateStatusDisplay('waitlist');
             }
+            createParticles();
         }
         function updateStatusDisplay(s) {
             const t = document.getElementById('status-text');
             t.textContent = s.toUpperCase();
             const cls = ['status-open','status-closed','status-full','status-waitlist','status-paused','status-slots'];
             t.classList.remove(...cls);
+            t.classList.add('glowing'); // Add glow/pulse
             if (s==='open') t.classList.add('status-open');
             else if (s==='closed') t.classList.add('status-closed');
             else if (s==='full') t.classList.add('status-full');
@@ -393,8 +474,28 @@
             else if (s==='paused') t.classList.add('status-paused');
             else if (s.toLowerCase().includes('slot')) t.classList.add('status-slots');
         }
-        loadCommissionStatus();
+        function createParticles() {
+            const container = document.querySelector('.particles-container');
+            const particleTypes = [
+                { src: 'images/comflower1.png', size: '20px' }, // Big flower
+                { src: 'images/comflower2.png', size: '10px' }  // Small flower
+            ];
+            const numParticles = 20; // Adjust for more/less density
 
+            for (let i = 0; i < numParticles; i++) {
+                const type = particleTypes[Math.random() < 0.5 ? 0 : 1];
+                const particle = document.createElement('img');
+                particle.src = type.src;
+                particle.classList.add('particle');
+                particle.style.width = type.size;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${Math.random() * 10 + 10}s`; // 10-20s for slow fall
+                particle.style.animationDelay = `-${Math.random() * 10}s`; // Random start for seamless loop
+                particle.style.transform = `rotate(${Math.random() * 360}deg)`; // Initial random rotation
+                container.appendChild(particle);
+            }
+        }
+        loadCommissionStatus();
         function setupSlideshow(sel, int=5000) {
             const s = document.querySelectorAll(sel);
             let c = 0;
@@ -406,16 +507,13 @@
         }
         setupSlideshow('#hero-slideshow .slide');
         setupSlideshow('#slideshow-container img');
-
         function toggleSub(el) {
             el.nextElementSibling.classList.toggle('active');
         }
-
         document.querySelector('.contact-form').addEventListener('submit', e => {
             e.preventDefault();
             alert('Demo form - add backend for real use.');
         });
-
         document.querySelectorAll('a[href^="#"]').forEach(a => {
             a.addEventListener('click', e => {
                 e.preventDefault();
